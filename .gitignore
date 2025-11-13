@@ -1,0 +1,14 @@
+# Dépendances Node.js (lourdes et inutiles à versionner)
+node_modules/
+
+# Variables d'environnement (SÉCURITÉ : Contient les mots de passe et clés API)
+.env
+
+# Données de la base de données Docker (Volumes)
+db_data/
+
+# Fichiers systèmes et IDE
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

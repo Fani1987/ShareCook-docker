@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modifier la recette - ShareCook</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <header>
+        <div class="container">
+            <h1><a href="index.html">ShareCook</a></h1>
+            <nav id="main-nav">
+                <button class="burger-menu" id="burger-menu" aria-label="Menu principal">☰</button>
+                <ul class="nav-links" id="nav-links"></ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <div class="auth-form-container">
+                <h2>Modifier ma recette</h2>
+                <form id="edit-recipe-form">
+                    <div class="form-group">
+                        <label for="title">Titre de la recette :</label>
+                        <input type="text" id="title" name="title" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="image_url">URL de l'image (optionnel) :</label>
+                        <input type="text" id="image_url" name="image_url" placeholder="https://...">
+                    </div>
+                    <div class="form-group">
+                        <label for="instructions">Instructions :</label>
+                        <textarea id="instructions" name="instructions" rows="10" required></textarea>
+                    </div>
+                    <button type="submit" class="btn">Enregistrer les modifications</button>
+                </form>
+                <div id="message-container"></div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 ShareCook - Tous droits réservés.</p>
+        </div>
+    </footer>
+    
+    <script src="js/main.js" defer></script>
+    <script src="js/app.js" defer></script>
+    <script src="js/edit-form.js" defer></script> </body>
+</html>
