@@ -5,6 +5,8 @@ const cors = require('cors');
 // Importer nos routes
 const authRoutes = require('./routes/auth');
 const recipeRoutes = require('./routes/recipes');
+const { getDb } = require('./config/mongodb'); // Importer la connexion MongoDB
+const commentsRoutes = require('./routes/comments');
 
 // Initialiser l'application Express
 const app = express();
@@ -23,13 +25,26 @@ app.use('/api/auth', authRoutes);
 
 // Routes des recettes (publiques ET protégées)
 app.use('/api/recipes', recipeRoutes);
+app.use('/api/comments', commentsRoutes);
 
 // Route de test
 app.get('/', (req, res) => {
   res.send('API Recettes Fonctionnelle !');
 });
 
-// Démarrer le serveur
-app.listen(PORT, () => {
-  console.log(`Serveur démarré sur http://localhost:${PORT}`);
-});
+// Fonction de démarrage asynchrone
+async function startServer() {
+    try {
+        await getDb(); // On attend la connexion à MongoDB
+        app.listen(PORT, () => {
+            console.log(`Serveur démarré sur le port ${PORT}`);
+            // c'est Nginx qui gère
+        });
+    } catch (e) {
+        console.error(e);
+        process.exit(1);
+    }
+}
+
+// Lancer le démarrage
+startServer();

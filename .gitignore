@@ -12,3 +12,5 @@ db_data/
 Thumbs.db
 .vscode/
 .idea/
+
+hash-password.js
