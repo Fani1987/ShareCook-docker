@@ -63,7 +63,7 @@ L'application est divisée en 3 conteneurs interconnectés :
 ### 1. Cloner le projet
 
 bash
-git clone [https://github.com/votre-pseudo/sharecook-docker.git](https://github.com/votre-pseudo/sharecook-docker.git)
+git clone [https://github.com/votre-pseudo/sharecook-docker.git](https://github.com/votre-pseudo/ShareCook-docker.git)
 cd sharecook-docker
 
 ### 2.Configuration (.env)
