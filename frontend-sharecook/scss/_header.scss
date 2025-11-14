@@ -1,0 +1,80 @@
+header {
+    background: $bg-white;
+    padding: 1rem 0;
+    border-bottom: 1px solid $bg-border;
+
+    .container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        text-align: left;
+    }
+
+    h1 {
+        color: $primary-green;
+        margin-bottom: 0; // Annule le margin-bottom de la version mobile
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+    }
+
+    .nav-links {
+        display: none; // Caché par défaut (Mobile First)
+        position: absolute;
+        top: 60px;
+        left: 0;
+        right: 0;
+        background: $bg-white;
+        border-bottom: 1px solid $bg-border;
+        z-index: 10;
+
+        &.active {
+            display: block; // Affiché par JS
+        }
+
+        li {
+            display: block;
+            text-align: center;
+            padding: 1rem 0;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        a {
+            text-decoration: none;
+            color: $grey-medium;
+            font-weight: bold;
+        }
+    }
+
+    .burger-menu {
+        display: block; // Visible par défaut
+        font-size: 1.8rem;
+        color: $grey-dark;
+        background: none;
+        border: none;
+        cursor: pointer;
+    }
+
+    /* Media Query pour Desktop (nesting) */
+    @media (min-width: 768px) {
+        .burger-menu {
+            display: none;
+        }
+
+        .nav-links {
+            display: flex;
+            position: static;
+            border: none;
+            background: none;
+
+            li {
+                display: inline-block;
+                border: none;
+                padding: 0;
+                margin-left: 1.5rem;
+            }
+        }
+    }
+}

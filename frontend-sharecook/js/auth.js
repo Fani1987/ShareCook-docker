@@ -1,3 +1,5 @@
+import { showMessage } from './utils.js';
+
 // Attend que tout le HTML soit chargé
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -78,13 +80,5 @@ document.addEventListener('DOMContentLoaded', () => {
                 showMessage(error.message, 'error');
             }
         });
-    }
-
-    // Fonction utilitaire pour afficher les messages
-    function showMessage(message, type) {
-        if (messageContainer) {
-            messageContainer.textContent = message;
-            messageContainer.className = type; // 'success' ou 'error'
-        }
     }
 });

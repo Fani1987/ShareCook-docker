@@ -1,0 +1,14 @@
+// Fichier maître (style.scss)
+
+// 1. Fondations (toujours en premier)
+@import 'variables';
+@import 'base';
+
+// 2. Composants globaux
+@import 'header';
+@import 'forms';
+
+// 3. Composants de page
+@import 'cards';
+@import 'detail-page';
+@import 'comments';

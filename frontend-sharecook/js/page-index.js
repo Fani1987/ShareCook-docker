@@ -1,25 +1,10 @@
 /**
- * Fichier app.js principal
- * Gère :
- * 1. Le menu burger
- * 2. L'affichage et les interactions avec la liste des recettes (CRUD SQL)
- * 3. L'affichage et les interactions avec les commentaires (CRUD NoSQL)
+ * Gère TOUTE la logique de la page d'accueil (index.html)
  */
+import { sanitizeHTML } from './utils.js';
 
-// Attend que tout le HTML soit chargé
 document.addEventListener('DOMContentLoaded', () => {
 
-    // --- 1. GESTION DU MENU BURGER ---
-    const burgerMenu = document.getElementById('burger-menu');
-    const navLinks = document.getElementById('nav-links');
-
-    if (burgerMenu && navLinks) {
-        burgerMenu.addEventListener('click', () => {
-            navLinks.classList.toggle('active');
-        });
-    }
-
-    // --- 2. SÉLECTION DES ÉLÉMENTS PRINCIPAUX ---
     const recipeListSection = document.getElementById('recipe-list');
     const mainContent = document.querySelector('main .container');
 
@@ -28,7 +13,6 @@ document.addEventListener('DOMContentLoaded', () => {
      */
     async function fetchAndDisplayRecipes() {
         const loggedInUserId = localStorage.getItem('sharecook_userId');
-
         try {
             const response = await fetch('/api/recipes');
             if (!response.ok) throw new Error(`Erreur HTTP: ${response.status}`);
@@ -47,7 +31,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 const recipeCard = document.createElement('article');
                 recipeCard.className = 'recipe-card';
 
-                // Préparer les boutons d'action (si l'utilisateur est le propriétaire)
                 let deleteButtonHtml = '';
                 let editButtonHtml = '';
 
@@ -55,12 +38,17 @@ document.addEventListener('DOMContentLoaded', () => {
                     editButtonHtml = `<a href="edit-recipe.html?id=${recipe.id}" class="edit-recipe-btn">Modifier</a>`; 
                     deleteButtonHtml = `<button class="delete-recipe-btn" data-recipe-id="${recipe.id}">Supprimer</button>`;
                 }
+                
+                const safeTitle = sanitizeHTML(recipe.title);
+                const safeUsername = sanitizeHTML(recipe.username);
+                const safeImgUrl = recipe.image_url ? sanitizeHTML(recipe.image_url) : 'https://via.placeholder.com/300x200?text=Recette';
+                const safeAlt = `Image de ${safeTitle}`;
 
                 recipeCard.innerHTML = `
-                    <img src="${recipe.image_url || 'https://via.placeholder.com/300x200?text=Recette'}" alt="Image de ${recipe.title}">
+                    <img src="${safeImgUrl}" alt="${safeAlt}">
                     <div class="recipe-card-content">
-                        <h3>${recipe.title}</h3>
-                        <p>Par : <strong>${recipe.username}</strong></p>
+                        <h3>${safeTitle}</h3>
+                        <p>Par : <strong>${safeUsername}</strong></p>
                         <div class="card-actions">
                             <a href="#" class="view-recipe-link" data-recipe-id="${recipe.id}">Voir la recette</a>
                             <div class="admin-actions">
@@ -87,25 +75,21 @@ document.addEventListener('DOMContentLoaded', () => {
      */
     async function showRecipeDetail(id) {
         try {
-            // --- 1. APPEL SQL (Récupérer la recette) ---
             const resRecipe = await fetch(`/api/recipes/${id}`);
             if (!resRecipe.ok) throw new Error("Recette non trouvée.");
             const recipe = await resRecipe.json();
 
-            // --- 2. APPEL NOSQL (Récupérer les commentaires) ---
-            const resComments = await fetch(`/api/recipes/${id}/comments`);
+            // --- CORRECTION URL ---
+            const resComments = await fetch(`/api/comments/recipe/${id}`);
             if (!resComments.ok) throw new Error("Impossible de charger les commentaires.");
             const comments = await resComments.json();
 
-            // --- 3. Vérifier l'état de connexion ---
             const token = localStorage.getItem('sharecook_token');
             const loggedInUserId = localStorage.getItem('sharecook_userId');
 
-            // --- 4. Construire le HTML des commentaires ---
             let commentsHtml = '<ul class="comment-list">';
             if (comments.length > 0) {
                 comments.forEach(comment => {
-                    // --- Logique d'affichage des boutons ---
                     let actionButtonsHtml = '';
                     if (loggedInUserId && loggedInUserId == comment.userId) {
                         actionButtonsHtml = `
@@ -115,12 +99,15 @@ document.addEventListener('DOMContentLoaded', () => {
                             </div>
                         `;
                     }
+                    
+                    const safeCommentText = sanitizeHTML(comment.text);
+                    const safeCommentUser = sanitizeHTML(comment.username);
 
                     commentsHtml += `
                         <li data-comment-li-id="${comment._id}">
                             ${actionButtonsHtml}
-                            <p data-comment-text-id="${comment._id}">${comment.text}</p>
-                            <span class="comment-meta">Par : ${comment.username} (le ${new Date(comment.createdAt).toLocaleDateString('fr-FR')})</span>
+                            <p data-comment-text-id="${comment._id}">${safeCommentText}</p>
+                            <span class="comment-meta">Par : ${safeCommentUser} (le ${new Date(comment.createdAt).toLocaleDateString('fr-FR')})</span>
                         </li>
                     `;
                 });
@@ -128,8 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 commentsHtml += '<li><p>Soyez le premier à commenter !</p></li>';
             }
             commentsHtml += '</ul>';
-
-            // --- 5. Construire le formulaire de commentaire (si connecté) ---
+            
             let commentFormHtml = '';
             if (token) {
                 commentFormHtml = `
@@ -145,18 +131,23 @@ document.addEventListener('DOMContentLoaded', () => {
                 commentFormHtml = '<p><a href="login.html">Connectez-vous</a> pour laisser un commentaire.</p>';
             }
 
-            // --- 6. Assembler et injecter le HTML final ---
+            const safeTitle = sanitizeHTML(recipe.title);
+            const safeUsername = sanitizeHTML(recipe.username);
+            const safeInstructions = sanitizeHTML(recipe.instructions).replace(/\n/g, '<br>');
+            const safeImgUrl = recipe.image_url ? sanitizeHTML(recipe.image_url) : 'https://via.placeholder.com/800x400?text=Recette';
+            const safeAlt = `Image de ${safeTitle}`;
+
             if (!mainContent) return; 
             mainContent.innerHTML = `
                 <div class="recipe-detail-container">
                     <a href="index.html" class="back-link">&larr; Revenir à la liste</a>
-                    <h2>${recipe.title}</h2>
-                    <p class="recipe-meta">Par : <strong>${recipe.username}</strong> | Posté le ${new Date(recipe.created_at).toLocaleDateString('fr-FR')}</p>
-                    <img src="${recipe.image_url || 'https://via.placeholder.com/800x400?text=Recette'}" alt="Image de ${recipe.title}">
+                    <h2>${safeTitle}</h2>
+                    <p class="recipe-meta">Par : <strong>${safeUsername}</strong> | Posté le ${new Date(recipe.created_at).toLocaleDateString('fr-FR')}</p>
+                    <img src="${safeImgUrl}" alt="${safeAlt}">
                     
                     <h3>Instructions :</h3>
                     <div class="recipe-instructions">
-                        ${recipe.instructions.replace(/\n/g, '<br>')}
+                        ${safeInstructions}
                     </div>
 
                     <section class="comments-section">
@@ -175,22 +166,19 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- 3. GESTION DES ÉVÉNEMENTS ---
-
+    
     // A. ÉVÉNEMENTS SUR LA PAGE D'ACCUEIL (Liste des recettes)
     if (recipeListSection) {
         fetchAndDisplayRecipes();
 
-        // Délégation d'événement pour les clics sur la liste
         recipeListSection.addEventListener('click', async (e) => {
             
-            // CAS 1 : Clic sur "Voir la recette"
             if (e.target.classList.contains('view-recipe-link')) {
                 e.preventDefault(); 
                 const recipeId = e.target.dataset.recipeId;
                 showRecipeDetail(recipeId);
             }
 
-            // CAS 2 : Clic sur "Supprimer" (Recette)
             if (e.target.classList.contains('delete-recipe-btn')) {
                 e.preventDefault();
                 const recipeId = e.target.dataset.recipeId;
@@ -223,11 +211,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // B. ÉVÉNEMENTS SUR LA VUE DÉTAILLÉE (Formulaires et Clics)
     if (mainContent) {
-
-        // Délégation d'événement pour les soumissions de formulaire
+        
         mainContent.addEventListener('submit', async (e) => {
             
-            // CAS 1 : Soumission d'un NOUVEAU commentaire
             if (e.target.id === 'comment-form') {
                 e.preventDefault();
                 const form = e.target;
@@ -241,7 +227,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 try {
-                    const res = await fetch(`/api/recipes/${recipeId}/comments`, {
+                    // --- CORRECTION URL ---
+                    const res = await fetch(`/api/comments/recipe/${recipeId}`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -253,13 +240,12 @@ document.addEventListener('DOMContentLoaded', () => {
                         const data = await res.json();
                         throw new Error(data.message || "Erreur lors de l'envoi");
                     }
-                    showRecipeDetail(recipeId); // Recharge la vue détail
+                    showRecipeDetail(recipeId);
                 } catch (error) {
                     alert(`Erreur: ${error.message}`);
                 }
             }
 
-            // CAS 2 : Soumission d'un commentaire MODIFIÉ
             if (e.target.id === 'inline-edit-form') {
                 e.preventDefault();
                 const form = e.target;
@@ -288,7 +274,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     
                     const data = await res.json();
                     
-                    // Mise à jour du DOM sans recharger
                     const li = form.closest('li');
                     li.querySelector(`[data-comment-text-id="${commentId}"]`).textContent = data.newText;
                     form.remove();
@@ -298,13 +283,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     alert(`Erreur: ${error.message}`);
                 }
             }
-        }); // Fin du listener 'submit'
+        }); 
 
-        
-        // Délégation d'événement pour les CLICS (supprimer/modifier commentaire)
         mainContent.addEventListener('click', async (e) => {
             
-            // CAS 3 : Clic sur "Supprimer" (Commentaire)
             if (e.target.classList.contains('delete-comment-btn')) {
                 e.preventDefault();
                 const commentId = e.target.dataset.commentId;
@@ -331,7 +313,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
 
-            // CAS 4 : Clic sur "Modifier" (Commentaire)
             else if (e.target.classList.contains('edit-comment-btn')) {
                 e.preventDefault();
                 const commentId = e.target.dataset.commentId;
@@ -339,16 +320,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 const p = li.querySelector(`[data-comment-text-id="${commentId}"]`);
                 const originalText = p.textContent;
                 
-                // Cacher le texte et les boutons
                 p.style.display = 'none';
                 li.querySelector('.comment-actions').style.display = 'none';
 
-                // Insérer le formulaire de modification
                 const editForm = document.createElement('form');
                 editForm.id = 'inline-edit-form';
                 editForm.dataset.commentId = commentId;
                 editForm.innerHTML = `
-                    <textarea class="inline-edit-textarea">${originalText}</textarea>
+                    <textarea class="inline-edit-textarea">${sanitizeHTML(originalText)}</textarea>
                     <div class="btn-group">
                         <button type"submit" class="btn-save">Enregistrer</button>
                         <button type="button" class="btn-cancel">Annuler</button>
@@ -357,17 +336,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 p.after(editForm);
             }
 
-            // CAS 5 : Clic sur "Annuler" la modification
             else if (e.target.classList.contains('btn-cancel')) {
                 e.preventDefault();
                 const li = e.target.closest('li');
                 
-                // Remettre tout comme avant
                 li.querySelector('#inline-edit-form').remove();
                 li.querySelector('p').style.display = 'block';
                 li.querySelector('.comment-actions').style.display = 'flex';
             }
-        }); // Fin du listener 'click'
+        }); 
 
     } // Fin de if (mainContent)
 

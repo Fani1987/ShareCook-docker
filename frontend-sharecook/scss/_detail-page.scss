@@ -1,0 +1,45 @@
+.recipe-detail-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: $bg-white;
+    border-radius: 5px;
+    box-shadow: $box-shadow;
+
+    img {
+        width: 100%;
+        max-height: 400px;
+        object-fit: cover;
+        border-radius: 5px;
+        margin-bottom: 1.5rem;
+    }
+
+    h2 {
+        color: $primary-green;
+        text-align: left;
+        margin-bottom: 1rem;
+    }
+
+    .recipe-meta {
+        font-style: italic;
+        color: #777;
+        margin-bottom: 1.5rem;
+    }
+
+    .recipe-instructions {
+        line-height: 1.8;
+        white-space: pre-wrap;
+    }
+
+    .back-link {
+        display: inline-block;
+        margin-bottom: 1rem;
+        color: $primary-green;
+        text-decoration: none;
+        font-weight: bold;
+
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+}

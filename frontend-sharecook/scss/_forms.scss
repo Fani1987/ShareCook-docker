@@ -1,0 +1,79 @@
+.auth-form-container {
+    max-width: 400px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: $bg-white;
+    border-radius: 5px;
+    box-shadow: $box-shadow;
+
+    h2 {
+        text-align: center;
+        margin-bottom: 1.5rem;
+    }
+}
+
+.form-group {
+    margin-bottom: 1rem;
+
+    label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: bold;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    textarea {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 1rem;
+        font-family: $font-main;
+    }
+    
+    textarea {
+        resize: vertical;
+    }
+}
+
+/* Bouton principal réutilisable */
+.btn {
+    display: inline-block;
+    width: 100%;
+    background: $primary-green;
+    color: $bg-white;
+    padding: 0.75rem 1rem;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 1rem;
+    border: none;
+    cursor: pointer;
+    text-align: center;
+
+    &:hover {
+        background: $primary-green-hover;
+    }
+}
+
+/* Conteneur de messages (succès/erreur) */
+#message-container {
+    margin-top: 1rem;
+    padding: 1rem;
+    border-radius: 5px;
+    display: none; 
+
+    &.success {
+        background: $success-bg;
+        color: $success-text;
+        display: block;
+    }
+
+    &.error {
+        background: $error-bg;
+        color: $error-text;
+        display: block;
+    }
+}

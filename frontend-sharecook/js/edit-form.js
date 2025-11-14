@@ -1,3 +1,5 @@
+import { showMessage } from './utils.js';
+
 document.addEventListener('DOMContentLoaded', () => {
     
     // --- 1. RÉCUPÉRER LES ÉLÉMENTS ET L'ÉTAT ---
@@ -93,13 +95,5 @@ document.addEventListener('DOMContentLoaded', () => {
                 showMessage(error.message, 'error');
             }
         });
-    }
-
-    // Fonction utilitaire pour afficher les messages
-    function showMessage(message, type) {
-        if (messageContainer) {
-            messageContainer.textContent = message;
-            messageContainer.className = type;
-        }
     }
 });

@@ -1,0 +1,35 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: $font-main;
+    line-height: 1.6;
+    background-color: $bg-light;
+    color: $grey-dark;
+}
+
+.container {
+    width: 90%;
+    max-width: 1100px;
+    margin: auto;
+}
+
+main {
+    padding: 2rem 0;
+}
+
+main h2 {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+footer {
+    text-align: center;
+    padding: 2rem 0;
+    background: $grey-dark;
+    color: $bg-white;
+    margin-top: 2rem;
+}
